@@ -1,22 +1,47 @@
-stls = tiles.stl A.stl B.stl C.stl D.stl E.stl F.stl G.stl H.stl I.stl J.stl K.stl L.stl M.stl N.stl O.stl P.stl R.stl S.stl T.stl U.stl V.stl W.stl Y.stl Z.stl
+LANGFILES = $(wildcard languages/*.lang)
+LANGS = $(basename $(notdir $(LANGFILES)))
 
-SCAD=openscad
+SCAD=openscad -m make -q
 SCAD_OPTS=--hardwarnings
 
-all: ${stls}
+all: | $(addprefix all_,$(LANGS))
 
 include $(wildcard *.deps)
 
-tiles.stl: scrabble.scad
-	$(SCAD) $(SCAD_OPTS) -m make -o $@ -D "all=true" -d $@.deps $<
+$(addprefix build/,$(LANGS)): | build
+	mkdir $@
 
-blank.stl: scrabble.scad
-	$(SCAD) $(SCAD_OPTS) -m make -o $@ -D "letter=undef" -d $@.deps $<
+build:
+	mkdir $@
 
-%.stl: scrabble.scad
-	$(SCAD) $(SCAD_OPTS) -m make -o $@ -D "letter=\"$*\"" -d $@.deps $<
+build/%.scad: languages/%.lang | build
+	@echo "$<: Generate $@"
+	@awk -F'	' 'BEGIN {printf "dict = ["} END {printf "];\nuse <../scrabble.scad>\nbuild(dict);\n"} {printf "\n[\"%s\", %d, %d],", $$1, $$2, $$3}' $< > $@
 
-.PHONY: all clean
+build/%/tiles.stl: build/%.scad | build/%
+	@echo "$<: Build $@"
+	@$(SCAD) $(SCAD_OPTS) -o $@ -D "all=true" -d $@.deps $<
 
-clean:
-	rm -f $(wildcard *.stl) $(wildcard *.deps)
+build/%/blank.stl: build/%.scad | build/%
+	@echo "$<: Build $@"
+	@$(SCAD) $(SCAD_OPTS) -o $@ -D "letter=\"[blank]\"" -d $@.deps $<
+
+define LANG_RULE
+build/$(1)/%.stl: build/$(1).scad | build/$(1)
+	@echo "$$<: Build $$@"
+	@$$(SCAD) $$(SCAD_OPTS) -o $$@ -D "letter=\"$$*\"" -d $$@.deps $$<
+
+.PHONY:: clean_$(1) all_$(1)
+
+clean_$(1):
+	rm -f $(1).scad $$(wildcard $(1)/*.stl) $$(wildcard $(1)/*.deps)
+
+all_$(1): build/$(1)/blank.stl build/$(1)/tiles.stl $(shell awk -F'	' '$$1 != "[blank]" {printf "build/$(1)/%s.stl ", $$1}' languages/$(1).lang )
+
+endef
+
+$(foreach LANG,$(LANGS),$(eval $(call LANG_RULE,$(LANG))))
+
+.PHONY:: all clean
+
+clean: | $(addprefix clean_,$(LANGS))
