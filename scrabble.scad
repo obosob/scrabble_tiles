@@ -75,9 +75,9 @@ letters = [
   ["W", "8", 1],
   ["J", "10", 1],
   ["Z", "10", 1]
-  ];
+];
 
-  module letter_tile(letter, score) {
+module letter_tile(letter, score) {
     difference() 
     {
       blank();
