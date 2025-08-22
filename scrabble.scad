@@ -1,10 +1,22 @@
 tile_size = 19;
 tile_thickness = 6.4;
-corner_radius = -1.5;
+corner_radius = 1.5;
+
+// intended for multimaterial 3d printing so use a tiny depth to create a face
+// that can be painted with the fill tool, but will still be printed on the
+// first layer
 text_depth = 0.001;
-score_txt_size=3.5;
-letter_txt_size=9;
-font="DejaVu Sans:style=Bold";
+
+score_txt_size = 3.5;
+letter_txt_size = 9;
+font = "DejaVu Sans:style=Bold";
+
+// when `all` is not true, only generates this tile
+letter = "[blank]";
+
+// when true, generates all tiles with their distribution on a grid
+all = false;
+
 
 module letter(letter) {
   color("black")
@@ -31,15 +43,12 @@ module fillet(r) {
 module blank() {
   difference() {
     linear_extrude(tile_thickness)
-      fillet(r=corner_radius) {
+      fillet(r=-corner_radius) {
         square(tile_size, center=true);
       }
     cylinder(h=4.5, r=7.5, $fn=30);
   }
 }
-
-letter = "[blank]";
-all = false;
 
 module letter_tile(letter, score) {
     difference() 
