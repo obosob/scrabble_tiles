@@ -9,7 +9,8 @@ text_depth = 0.001;
 
 score_txt_size = 3.5;
 letter_txt_size = 9;
-font = "DejaVu Sans:style=Bold";
+letter_font = "DejaVu Sans:style=Bold";
+score_font = "URW Gothic:style=Demi";
 
 // when `all` is not true, only generates this tile
 letter = "[blank]";
@@ -20,16 +21,16 @@ all = false;
 
 module letter(letter) {
   color("black")
-    translate([0,1,tile_thickness - text_depth])
+    translate([-0.5,1,tile_thickness - text_depth])
     linear_extrude(text_depth)
-    text(letter, halign="center", valign="center", size=letter_txt_size, font=font);
+    text(letter, halign="center", valign="center", size=letter_txt_size, font=letter_font);
 }
 
 module score(n) {
   color("black")
     translate([(tile_size/2)-1.5, -(tile_size/2)+1.5, tile_thickness - text_depth])
     linear_extrude(text_depth)
-    text(str(n), halign="right", valign="bottom", size=score_txt_size, font=font);
+    text(str(n), halign="right", valign="bottom", size=score_txt_size, font=score_font);
 }
 
 module fillet(r) {
