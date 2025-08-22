@@ -1,0 +1,45 @@
+# Swedish language tile definitions
+#
+# Based on official tile scores and distributions from 
+# https://en.wikipedia.org/wiki/Scrabble_letter_distributions
+#
+#  2 blank tiles (scoring 0 points)
+#  1 point: A ×8, R ×8, S ×8, T ×8, E ×7, N ×6, D ×5, I ×5, L ×5
+#  2 points: O ×5, G ×3, K ×3, M ×3, H ×2
+#  3 points: F ×2, V ×2, Ä ×2
+#  4 points: U ×3, B ×2, P ×2, Å ×2, Ö ×2
+#  7 points: J ×1, Y ×1
+#  8 points: C ×1, X ×1
+#  10 points: Z ×1
+
+#####################
+# char	score	count
+#####################
+[blank]	0	2
+A	1	8
+R	1	8
+S	1	8
+T	1	8
+E	1	7
+N	1	6
+D	1	5
+I	1	5
+L	1	5
+O	2	5
+G	2	3
+K	2	3
+M	2	3
+H	2	2
+F	3	2
+V	3	2
+Ä	3	2
+U	4	3
+B	4	2
+P	4	2
+Å	4	2
+Ö	4	2
+J	7	1
+Y	7	1
+C	8	1
+X	8	1
+Z	10	1
