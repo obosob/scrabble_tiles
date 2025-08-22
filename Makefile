@@ -6,7 +6,8 @@ SCAD_OPTS=--hardwarnings
 
 all: | $(addprefix all_,$(LANGS))
 
-include $(wildcard *.deps)
+
+include $(wildcard build/*/*.deps)
 
 $(addprefix build/,$(LANGS)): | build
 	mkdir $@
@@ -45,3 +46,5 @@ $(foreach LANG,$(LANGS),$(eval $(call LANG_RULE,$(LANG))))
 .PHONY:: all clean
 
 clean: | $(addprefix clean_,$(LANGS))
+
+.SECONDARY:
