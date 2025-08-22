@@ -16,7 +16,7 @@ build:
 
 build/%.scad: languages/%.lang | build
 	@echo "$<: Generate $@"
-	@awk -F'	' 'BEGIN {printf "dict = ["} END {printf "];\nuse <../scrabble.scad>\nbuild(dict);\n"} {printf "\n[\"%s\", %d, %d],", $$1, $$2, $$3}' $< > $@
+	@grep -v '^#\|^\s*$$' $< | awk -F'	' 'BEGIN {printf "dict = ["} END {printf "];\nuse <../scrabble.scad>\nbuild(dict);\n"} {printf "\n[\"%s\", %d, %d],", $$1, $$2, $$3}' > $@
 
 build/%/tiles.stl: build/%.scad | build/%
 	@echo "$<: Build $@"
@@ -34,9 +34,9 @@ build/$(1)/%.stl: build/$(1).scad | build/$(1)
 .PHONY:: clean_$(1) all_$(1)
 
 clean_$(1):
-	rm -f $(1).scad $$(wildcard $(1)/*.stl) $$(wildcard $(1)/*.deps)
+	rm -f build/$(1).scad $$(wildcard build/$(1)/*.stl) $$(wildcard build/$(1)/*.deps)
 
-all_$(1): build/$(1)/blank.stl build/$(1)/tiles.stl $(shell awk -F'	' '$$1 != "[blank]" {printf "build/$(1)/%s.stl ", $$1}' languages/$(1).lang )
+all_$(1): build/$(1)/blank.stl build/$(1)/tiles.stl $(shell grep -v '^#\|^\s*$$' languages/$(1).lang | awk -F'	' '$$1 != "[blank]" {printf "build/$(1)/%s.stl ", $$1}' )
 
 endef
 
